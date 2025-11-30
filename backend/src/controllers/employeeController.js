@@ -14,6 +14,7 @@ function toEmployeeDTO(doc) {
     salary: doc.salary,
     date_of_joining: doc.date_of_joining,
     department: doc.department,
+    profile_picture: doc.profile_picture || null,
   };
 }
 
@@ -29,6 +30,7 @@ export async function list(req, res, next) {
       salary: e.salary,
       date_of_joining: e.date_of_joining,
       department: e.department,
+      profile_picture: e.profile_picture || null,
     }));
     return res.status(200).json(out);
   } catch (err) {
@@ -48,6 +50,13 @@ export async function create(req, res, next) {
       department,
     } = req.body;
 
+    // If multer stored a file, build a relative URL/path
+    let profile_picture = null;
+    if (req.file) {
+      // Express static in app.js serves /uploads
+      profile_picture = `/uploads/${req.file.filename}`;
+    }
+
     const created = await Employee.create({
       first_name,
       last_name,
@@ -56,6 +65,7 @@ export async function create(req, res, next) {
       salary,
       date_of_joining: new Date(date_of_joining),
       department,
+      profile_picture,
     });
 
     return res.status(201).json({
@@ -77,11 +87,15 @@ export async function getById(req, res, next) {
   try {
     const { eid } = req.params;
     if (!Types.ObjectId.isValid(eid)) {
-      return res.status(400).json({ status: false, message: 'Invalid employee id' });
+      return res
+        .status(400)
+        .json({ status: false, message: 'Invalid employee id' });
     }
     const emp = await Employee.findById(eid);
     if (!emp) {
-      return res.status(404).json({ status: false, message: 'Employee not found' });
+      return res
+        .status(404)
+        .json({ status: false, message: 'Employee not found' });
     }
     return res.status(200).json(toEmployeeDTO(emp));
   } catch (err) {
@@ -93,7 +107,9 @@ export async function update(req, res, next) {
   try {
     const { eid } = req.params;
     if (!Types.ObjectId.isValid(eid)) {
-      return res.status(400).json({ status: false, message: 'Invalid employee id' });
+      return res
+        .status(400)
+        .json({ status: false, message: 'Invalid employee id' });
     }
 
     const updates = {};
@@ -108,10 +124,16 @@ export async function update(req, res, next) {
     ];
     for (const key of allowed) {
       if (req.body[key] !== undefined) {
-        updates[key] = key === 'date_of_joining'
-          ? new Date(req.body[key])
-          : req.body[key];
+        updates[key] =
+          key === 'date_of_joining'
+            ? new Date(req.body[key])
+            : req.body[key];
       }
+    }
+
+    // If new profile picture uploaded, update it as well
+    if (req.file) {
+      updates.profile_picture = `/uploads/${req.file.filename}`;
     }
 
     const result = await Employee.findByIdAndUpdate(eid, updates, {
@@ -120,13 +142,19 @@ export async function update(req, res, next) {
     });
 
     if (!result) {
-      return res.status(404).json({ status: false, message: 'Employee not found' });
+      return res
+        .status(404)
+        .json({ status: false, message: 'Employee not found' });
     }
 
-    return res.status(200).json({ message: 'Employee details updated successfully.' });
+    return res
+      .status(200)
+      .json({ message: 'Employee details updated successfully.' });
   } catch (err) {
     if (err && err.code === 11000) {
-      return res.status(409).json({ status: false, message: 'Email already in use' });
+      return res
+        .status(409)
+        .json({ status: false, message: 'Email already in use' });
     }
     next(err);
   }
@@ -136,18 +164,52 @@ export async function removeByQuery(req, res, next) {
   try {
     const { eid } = req.query;
     if (!eid) {
-      return res.status(400).json({ status: false, message: 'Missing eid query param' });
+      return res
+        .status(400)
+        .json({ status: false, message: 'Missing eid query param' });
     }
     if (!Types.ObjectId.isValid(eid)) {
-      return res.status(400).json({ status: false, message: 'Invalid employee id' });
+      return res
+        .status(400)
+        .json({ status: false, message: 'Invalid employee id' });
     }
 
     const del = await Employee.findByIdAndDelete(eid);
     if (!del) {
-      return res.status(404).json({ status: false, message: 'Employee not found' });
+      return res
+        .status(404)
+        .json({ status: false, message: 'Employee not found' });
     }
 
     return res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+// search employees by department/position
+export async function search(req, res, next) {
+  try {
+    const { department, position } = req.query;
+
+    const filter = {};
+    if (department) filter.department = department;
+    if (position) filter.position = position;
+
+    const employees = await Employee.find(filter).lean();
+    const out = employees.map((e) => ({
+      employee_id: e._id.toString(),
+      first_name: e.first_name,
+      last_name: e.last_name,
+      email: e.email,
+      position: e.position,
+      salary: e.salary,
+      date_of_joining: e.date_of_joining,
+      department: e.department,
+      profile_picture: e.profile_picture || null,
+    }));
+
+    return res.status(200).json(out);
   } catch (err) {
     next(err);
   }
