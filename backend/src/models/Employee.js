@@ -38,7 +38,7 @@ const employeeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    // store path to profile picture
+    // Add: Profile picture URL/path
     profile_picture: {
       type: String,
       default: null,

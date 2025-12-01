@@ -1,4 +1,3 @@
-// backend/app.js
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -9,29 +8,29 @@ import employeeRoutes from './routes/employeeRoutes.js';
 
 const app = express();
 
-// Resolve __dirname in ES modules
+// Resolve __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS: allow React dev client
+// CORS
 app.use(
   cors({
-    origin: 'http://localhost:3000', // React dev URL
+    origin: 'http://localhost:3000',
     credentials: true,
   })
 );
 
-// JSON body parsing (still needed for non-multipart routes)
+// JSON parsing
 app.use(express.json());
 
-// Serve uploaded files (profile pictures) statically
+// Serve statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Mount routes
+// Routes
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/emp', employeeRoutes);
 
-// 404 handler
+// 404 error handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });

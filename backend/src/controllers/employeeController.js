@@ -50,10 +50,9 @@ export async function create(req, res, next) {
       department,
     } = req.body;
 
-    // If multer stored a file, build a relative URL/path
+    // If multer stored a file build a relative URL/path
     let profile_picture = null;
     if (req.file) {
-      // Express static in app.js serves /uploads
       profile_picture = `/uploads/${req.file.filename}`;
     }
 
@@ -131,7 +130,7 @@ export async function update(req, res, next) {
       }
     }
 
-    // If new profile picture uploaded, update it as well
+    // If new profile picture uploaded we update it too
     if (req.file) {
       updates.profile_picture = `/uploads/${req.file.filename}`;
     }

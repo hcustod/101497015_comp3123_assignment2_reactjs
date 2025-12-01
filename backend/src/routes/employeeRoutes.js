@@ -1,4 +1,3 @@
-// src/routes/employeeRoutes.js
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -14,13 +13,12 @@ import { validate } from '../validators/validate.js';
 
 const router = Router();
 
-// --- New: Multer setup --------------------------------------
-
-// resolve __dirname in ES modules
+// Multer setup
+// resolve __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// uploads folder: src/uploads
+// uploads src/uploads
 const uploadDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -45,15 +43,14 @@ const upload = multer({
   },
 });
 
-// --- Routes --------------------------------------------------
-
-// GET /employees (list all)
+// Routes 
+// GET /employees
 router.get('/employees', controller.list);
 
-// NEW: GET /employees/search?department=&position=
+// GET /employees/search?department=&position=
 router.get('/employees/search', controller.search);
 
-// POST /employees (with optional profile_picture)
+// POST /employees
 router.post(
   '/employees',
   upload.single('profile_picture'),
@@ -65,7 +62,7 @@ router.post(
 // GET /employees/:eid
 router.get('/employees/:eid', controller.getById);
 
-// PUT /employees/:eid (with optional profile_picture)
+// PUT /employees/:eid
 router.put(
   '/employees/:eid',
   upload.single('profile_picture'),
@@ -74,7 +71,7 @@ router.put(
   controller.update
 );
 
-// DELETE /employees?eid=...
+// DELETE /employees?eid=
 router.delete('/employees', controller.removeByQuery);
 
 export default router;

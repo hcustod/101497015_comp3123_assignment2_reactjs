@@ -18,7 +18,7 @@ export async function signup(req, res, next) {
       user_id: user._id.toString(),
     });
   } catch (err) {
-    // Duplicate email/username
+    // No duplicate emails or usernames
     if (err && err.code === 11000) {
       return res.status(409).json({
         status: false,
@@ -56,7 +56,7 @@ export async function login(req, res, next) {
       });
     }
 
-    // JWT token
+    // Using the JWT token
     let payload = { message: 'Login successful.' };
     if (process.env.JWT_SECRET) {
       const token = jwt.sign(
