@@ -136,7 +136,7 @@ const EmployeeEditPage = () => {
         <Box mb={2}>
           <Typography variant="body2">Current Profile Picture:</Typography>
           <img
-            src={`http://localhost:5000${currentProfilePicture}`}
+            src={`http://localhost:5001${currentProfilePicture}`}
             alt="Profile"
             style={{ maxWidth: '150px', marginTop: '8px' }}
           />

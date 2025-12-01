@@ -189,14 +189,29 @@ export async function removeByQuery(req, res, next) {
 // search employees by department/position
 export async function search(req, res, next) {
   try {
-    const { department, position } = req.query;
+    const { department, position, name } = req.query;
 
     const filter = {};
-    if (department) filter.department = department;
-    if (position) filter.position = position;
 
-    const employees = await Employee.find(filter).lean();
-    const out = employees.map((e) => ({
+    if (department) {
+      filter.department = { $regex: department, $options: 'i' };
+    }
+
+    if (position) {
+      filter.position = { $regex: position, $options: 'i' };
+    }
+
+    // match first_name OR last_name 
+    if (name) {
+      filter.$or = [
+        { first_name: { $regex: name, $options: 'i' } },
+        { last_name: { $regex: name, $options: 'i' } },
+      ];
+    }
+
+    const employees = await Employee.find(filter).exec();
+
+    const dto = employees.map((e) => ({
       employee_id: e._id.toString(),
       first_name: e.first_name,
       last_name: e.last_name,
@@ -205,10 +220,10 @@ export async function search(req, res, next) {
       salary: e.salary,
       date_of_joining: e.date_of_joining,
       department: e.department,
-      profile_picture: e.profile_picture || null,
+      profile_picture: e.profile_picture,
     }));
 
-    return res.status(200).json(out);
+    return res.json(dto);
   } catch (err) {
     next(err);
   }
