@@ -113,7 +113,7 @@ const EmployeeListPage = () => {
       {/* main card */}
       <Box
         sx={{
-          borderRadius: 5,
+          borderRadius: 2,
           p: 4,
           background:
             "linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,64,175,0.9))",
@@ -170,8 +170,8 @@ const EmployeeListPage = () => {
           sx={{
             mt: 4,
             p: 2.5,
-            borderRadius: 3,
-            bgcolor: "rgba(15,23,42,0.95)",
+            borderRadius: 2,
+            bgcolor: "rgba(3, 3, 3, 0.95)",
             border: "1px solid rgba(148,163,184,0.4)",
           }}
         >
@@ -261,13 +261,13 @@ const EmployeeListPage = () => {
             component={Paper}
             sx={{
               mt: 4,
-              borderRadius: 3,
+              borderRadius: 2,
               bgcolor: "rgba(15,23,42,0.98)",
               overflow: "hidden",
               border: "1px solid rgba(15,23,42,0.9)",
             }}
           >
-            <Table>
+            <Table sx={{ "& td, & th": { px: 3, py: 2 } }}>
               <TableHead>
                 <TableRow
                   sx={{
@@ -295,6 +295,7 @@ const EmployeeListPage = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {employees.map((emp, index) => (
                   <TableRow
@@ -309,6 +310,7 @@ const EmployeeListPage = () => {
                     <TableCell sx={{ color: "#e5e7eb" }}>
                       {emp.first_name} {emp.last_name}
                     </TableCell>
+
                     <TableCell sx={{ color: "#cbd5f5" }}>
                       {emp.email}
                     </TableCell>
@@ -318,6 +320,7 @@ const EmployeeListPage = () => {
                     <TableCell sx={{ color: "#cbd5f5" }}>
                       {emp.position}
                     </TableCell>
+
                     <TableCell align="right">
                       <Button
                         size="small"

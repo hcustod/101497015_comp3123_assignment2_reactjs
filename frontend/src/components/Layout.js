@@ -13,6 +13,8 @@ import WorkOutlineIcon from "@mui/icons-material/Work";
 const Layout = ({ children }) => {
   const navigate = useNavigate();
 
+  const isAuthenticated = !!localStorage.getItem("token");
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -22,8 +24,9 @@ const Layout = ({ children }) => {
     <Box
       sx={{
         minHeight: "100vh",
+        // softened + slightly shifted gradient to avoid the hard line
         background:
-          "radial-gradient(circle at 0% 0%, #1d4ed8 0, #020617 45%, #020617 100%)",
+          "radial-gradient(circle at 15% 20%, rgba(37,99,235,0.9) 0, #020617 65%)",
       }}
     >
       <AppBar
@@ -52,28 +55,60 @@ const Layout = ({ children }) => {
             </Typography>
           </Box>
 
+          {/* ---- NAV BUTTONS ---- */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/employees"
-              sx={{ fontSize: 14, opacity: 0.9 }}
-            >
-              Employees
-            </Button>
-            <Button
-              variant="outlined"
-              color="inherit"
-              onClick={handleLogout}
-              sx={{
-                ml: 1,
-                borderRadius: 999,
-                borderColor: "rgba(248,250,252,0.4)",
-                px: 2.5,
-              }}
-            >
-              Logout
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/employees"
+                  sx={{ fontSize: 14, opacity: 0.9 }}
+                >
+                  Employees
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={handleLogout}
+                  sx={{
+                    ml: 1,
+                    borderRadius: 999,
+                    borderColor: "rgba(248,250,252,0.4)",
+                    px: 2.5,
+                  }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/login"
+                  sx={{ fontSize: 14, opacity: 0.9 }}
+                >
+                  Login
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  component={Link}
+                  to="/signup"
+                  sx={{
+                    ml: 1,
+                    borderRadius: 999,
+                    borderColor: "rgba(248,250,252,0.4)",
+                    px: 2.5,
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>

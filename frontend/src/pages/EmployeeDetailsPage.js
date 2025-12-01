@@ -52,6 +52,10 @@ const EmployeeDetailsPage = () => {
     ? `${FILE_BASE_URL}${employee.profile_picture}`
     : "";
 
+  const joiningDate = employee.date_of_joining
+    ? new Date(employee.date_of_joining).toLocaleDateString()
+    : "";
+
   return (
     <Box
       sx={{
@@ -102,7 +106,7 @@ const EmployeeDetailsPage = () => {
 
         <Box sx={{ mt: 4, width: "100%", borderBottom: "1px solid #3a4a7a" }} />
 
-        {/* Content Row */}
+        {/* item row */}
         <Box
           sx={{
             display: "flex",
@@ -111,7 +115,7 @@ const EmployeeDetailsPage = () => {
             flexWrap: "wrap",
           }}
         >
-          {/* Image */}
+          {/* image */}
           <Box
             sx={{
               width: "280px",
@@ -132,7 +136,7 @@ const EmployeeDetailsPage = () => {
             />
           </Box>
 
-          {/* Info Columns */}
+          {/* info */}
           <Box
             sx={{
               flexGrow: 1,
@@ -161,12 +165,12 @@ const EmployeeDetailsPage = () => {
 
             <Box>
               <Typography sx={{ opacity: 0.7 }}>Date of Joining</Typography>
-              <Typography variant="h6">{employee.date_of_joining}</Typography>
+              <Typography variant="h6">{joiningDate}</Typography>
             </Box>
           </Box>
         </Box>
 
-        {/* Buttons */}
+        {/* buttons */}
         <Box
           sx={{
             mt: 6,
